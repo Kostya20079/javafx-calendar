@@ -21,7 +21,7 @@ public class App extends Application {
     }
 
     private static Parent loadFXML() throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("primary" + ".fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("calendar.fxml"));
         return fxmlLoader.load();
     }
 
