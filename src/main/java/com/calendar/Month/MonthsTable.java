@@ -1,5 +1,7 @@
 package com.calendar.Month;
 
+import com.calendar.Calendar;
+
 /**
  * A utility class providing a static table of months and methods to retrieve month information,
  * including handling leap years for February.
@@ -73,6 +75,12 @@ public class MonthsTable {
         }
 
         return months[monthNumber - 1].getDays();
+    }
+
+    public static int getDaysInMonth(Calendar calendar) {
+        int monthNum = calendar.getMonth().getNumOfMonth();
+        int yearNum = calendar.getYear();
+        return getDaysInMonth(yearNum, monthNum);
     }
 
     /**

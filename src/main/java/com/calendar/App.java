@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * JavaFX Calendar App
@@ -15,7 +16,11 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        Scene scene = new Scene(loadFXML(), 640, 480);
+        Scene scene = new Scene(loadFXML());
+
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/styles.css")).toExternalForm());
+
+        stage.setTitle("Calendar");
         stage.setScene(scene);
         stage.show();
     }
