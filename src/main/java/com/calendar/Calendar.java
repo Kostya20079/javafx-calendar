@@ -292,6 +292,6 @@ public class Calendar implements Comparable<Calendar> {
 
     @Override
     public String toString() {
-        return String.format("%02d-%02d-%04d", day, month.getNumOfMonth(), year);
+        return String.format("%04d-%02d-%02d", year, month.getNumOfMonth(), day);
     }
 }

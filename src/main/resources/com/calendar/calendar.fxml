@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
@@ -46,7 +49,20 @@
    <center>
       <AnchorPane fx:id="root" prefHeight="200.0" BorderPane.alignment="CENTER" />
    </center>
-   <right>
-      <AnchorPane prefHeight="862.0" prefWidth="240.0" style="-fx-background-color: #CEDADA;" BorderPane.alignment="CENTER" />
-   </right>
+    <right>
+        <AnchorPane fx:id="eventPanel" prefHeight="862.0" prefWidth="298.0" style="-fx-background-color: #CEDADA;" BorderPane.alignment="CENTER">
+            <children>
+                <Label layoutX="96.0" layoutY="14.0" text="Wydarzenia">
+                    <font>
+                        <Font name="System Bold" size="18.0" />
+                    </font>
+                </Label>
+                <TextField fx:id="eventTitleField" layoutX="24.0" layoutY="59.0" prefHeight="26.0" prefWidth="250.0" promptText="Tytuł wydarzenia" />
+                <DatePicker fx:id="eventDatePicker" layoutX="24.0" layoutY="102.0" prefHeight="26.0" prefWidth="250.0" />
+                <Button fx:id="addEventBtn" layoutX="24.0" layoutY="138.0" prefHeight="26.0" prefWidth="250.0" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="Dodaj wydarzenie" />
+                <Label layoutX="24.0" layoutY="193.0" style="-fx-text-fill: #8F5C38;" text="Lista wydarzeń:" />
+                <ListView fx:id="eventListView" layoutX="20.0" layoutY="220.0" prefHeight="600.0" prefWidth="260.0" />
+            </children>
+        </AnchorPane>
+    </right>
 </BorderPane>

@@ -6,19 +6,20 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 
 import java.net.URL;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.ResourceBundle;
 
 public class CalendarController implements Initializable {
 
-//    private final String EVENTS_PATH;
+    private final String EVENTS_PATH = Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString() + "/src/main/java/com/calendar/Event/events.csv";
     private Calendar calendar;
     private ButtonHandler buttonHandler;
     private EventManager eventManager;
@@ -32,21 +33,74 @@ public class CalendarController implements Initializable {
     @FXML
     private Button minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn;
 
+    // Event
+    @FXML
+    private AnchorPane eventPanel;
+    @FXML
+    private TextField eventTitleField;
+    @FXML
+    private DatePicker eventDatePicker;
+    @FXML
+    private Button addEventBtn;
+    @FXML
+    private ListView<String> eventListView;
+
 
     private void init() {
         calendar = new Calendar();
-//        eventManager = new EventManager();
+        eventManager = new EventManager(EVENTS_PATH);
         currentDate.setText(calendar.getDateWithMonth());
         buttonHandler = new ButtonHandler(calendar, this::refreshCalendar);
 
         buttonHandler.setupButtons(minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn);
 
+        setupEventPanel();
         createCalendarCardsGrid();
     }
 
     private void refreshCalendar() {
         currentDate.setText(calendar.getDateWithMonth());
+        eventDatePicker.setValue(LocalDate.parse(calendar.toString()));
         createCalendarCardsGrid();
+    }
+
+    private void setupEventPanel() {
+        eventManager.loadEvents();
+        eventDatePicker.setValue(LocalDate.parse(calendar.toString()));
+        refreshEventList();
+
+        addEventBtn.setOnAction(e -> {
+            String title = eventTitleField.getText();
+            LocalDate date = eventDatePicker.getValue();
+
+            if (title == null || title.isBlank() || date == null) {
+                System.out.println("Nieprawidłowe dane wydarzenia.");
+                return;
+            }
+
+            try {
+                eventManager.addEvent(date, title);
+                eventTitleField.clear();
+                refreshEventList();
+            } catch (Exception ex) {
+                System.err.println("Błąd dodawania wydarzenia: " + ex.getMessage());
+            }
+        });
+
+        eventDatePicker.valueProperty().addListener((obs, oldDate, newDate) -> refreshEventList());
+    }
+
+    private void refreshEventList() {
+        eventListView.getItems().clear();
+
+        var events = eventManager.getAllEvents();
+        if (events.isEmpty()) {
+            eventListView.getItems().add("Brak wydarzeń");
+        } else {
+            for (var e : events) {
+                eventListView.getItems().add("• " + e.getDescription());
+            }
+        }
     }
 
     public void createCalendarCardsGrid() {
