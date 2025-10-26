@@ -20,6 +20,7 @@ public class App extends Application {
 
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/styles/styles.css")).toExternalForm());
 
+        stage.setMaximized(true);
         stage.setTitle("Calendar");
         stage.setScene(scene);
         stage.show();

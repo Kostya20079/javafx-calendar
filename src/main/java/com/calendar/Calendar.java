@@ -31,6 +31,19 @@ public class Calendar implements Comparable<Calendar> {
         this.year = data.getYear();
     }
 
+    public Calendar(Calendar other) {
+        this.day = other.getDay();
+        this.year = other.getYear();
+        this.month = other.getMonth();
+    }
+
+    public void resetToToday() {
+        LocalDate data = LocalDate.now();
+        this.day = data.getDayOfMonth();
+        this.month = MonthsTable.getMonth(data.getMonthValue());
+        this.year = data.getYear();
+    }
+
     /**
      * Constructs a new {@code Calendar} object with the specified day, month, and year.
      * Performs validation to ensure the date is valid (e.g., day within month's range,
@@ -252,6 +265,10 @@ public class Calendar implements Comparable<Calendar> {
      */
     public void setYear(int year) {
         this.year = year;
+    }
+
+    public String getDateWithMonth() {
+        return String.format("%d %s %d", day, month.getNameOfMonth(), year);
     }
 
     @Override
