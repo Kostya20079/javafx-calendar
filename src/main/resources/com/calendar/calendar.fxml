@@ -7,26 +7,32 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="932.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.calendar.CalendarController">
    <top>
-      <AnchorPane prefHeight="70.0" prefWidth="1220.0" style="-fx-background-color: #A89B8C;" BorderPane.alignment="CENTER">
-         <children>
-            <Label fx:id="currentDate" layoutX="44.0" layoutY="19.0" prefHeight="36.0" prefWidth="320.0" style="-fx-text-fill: #8F5C38;" text="Data">
-               <font>
-                  <Font size="25.0" />
-               </font>
-            </Label>
-             <Label fx:id="dayName" alignment="CENTER_RIGHT" layoutY="20.0" prefHeight="30.0" style="-fx-text-fill: #8F5C38;" text="Label">
-                 <font>
-                     <Font size="20.0" />
-                 </font>
-                 <AnchorPane.rightAnchor>30.0</AnchorPane.rightAnchor>
-             </Label>
-         </children>
-      </AnchorPane>
+       <AnchorPane prefHeight="70" style="-fx-background-color: #A89B8C;">
+           <children>
+               <Label fx:id="currentDate" layoutX="20" layoutY="19" prefHeight="36.0" prefWidth="300.0" style="-fx-text-fill: #8F5C38;" text="Data">
+                   <font>
+                       <Font size="25" />
+                   </font>
+               </Label>
+               <HBox alignment="CENTER" layoutY="15" prefWidth="500" spacing="20" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+                   <Button fx:id="prevMonthBtn" prefWidth="40" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="‹" />
+                   <Label fx:id="selectedMonthLabel" alignment="CENTER" prefWidth="260" style="-fx-text-fill: #8F5C38;" text="Styczeń 2024">
+                       <font>
+                           <Font size="25" />
+                       </font>
+                   </Label>
+                   <Button fx:id="nextMonthBtn" prefWidth="40" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="›" />
+
+               </HBox>
+           </children>
+       </AnchorPane>
+
    </top>
    <left>
       <AnchorPane prefHeight="862.0" prefWidth="240.0" style="-fx-background-color: #CEDADA;" BorderPane.alignment="CENTER">

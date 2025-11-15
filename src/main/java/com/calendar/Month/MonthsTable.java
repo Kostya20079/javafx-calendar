@@ -36,6 +36,26 @@ public class MonthsTable {
         };
     }
 
+    private static final String[] monthsGenitive = {
+            "stycznia",
+            "lutego",
+            "marca",
+            "kwietnia",
+            "maja",
+            "czerwca",
+            "lipca",
+            "sierpnia",
+            "września",
+            "października",
+            "listopada",
+            "grudnia"
+    };
+
+    public static String getMonthNameGenitive(int monthNumber) {
+        return monthsGenitive[monthNumber - 1];
+    }
+
+
     /**
      * Retrieves a {@link Month} object based on its numerical representation (1-12)
      * for a standard year. This method does not account for leap years.

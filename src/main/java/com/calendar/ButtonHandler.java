@@ -1,39 +1,51 @@
 package com.calendar;
 
 import javafx.scene.control.Button;
+import java.util.function.Consumer;
 
 public class ButtonHandler {
 
-    private Calendar calendar;
-    private final Runnable onCalendarUpdate;
+    private final Calendar calendar;
+    private final Consumer<Boolean> onCalendarUpdate;
 
-    public ButtonHandler(Calendar calendar, Runnable onCalendarUpdate) {
+    public ButtonHandler(Calendar calendar, Consumer<Boolean> onCalendarUpdate) {
         this.calendar = calendar;
         this.onCalendarUpdate = onCalendarUpdate;
     }
 
     public void setupButtons(Button minusDayBtn, Button plusDayBtn,
-                             Button minusWeekBtn, Button plusWeekBt, Button resetBtn) {
+                             Button minusWeekBtn, Button plusWeekBtn, Button resetBtn,
+                             Button prevMonthBtn, Button nextMonthBtn) {
 
         minusDayBtn.setOnAction(event -> {
             calendar.minusDay();
-            onCalendarUpdate.run();
+            onCalendarUpdate.accept(true);
         });
         plusDayBtn.setOnAction(event -> {
             calendar.plusDay();
-            onCalendarUpdate.run();
+            onCalendarUpdate.accept(true);
         });
         minusWeekBtn.setOnAction(event -> {
             calendar.minusWeek();
-            onCalendarUpdate.run();
+            onCalendarUpdate.accept(true);
         });
-        plusWeekBt.setOnAction(event -> {
+        plusWeekBtn.setOnAction(event -> {
             calendar.plusWeek();
-            onCalendarUpdate.run();
+            onCalendarUpdate.accept(true);
         });
         resetBtn.setOnAction(event -> {
-            calendar.resetToToday(); // reset calendar data to current date
-            onCalendarUpdate.run();
+            calendar.resetToToday();
+            onCalendarUpdate.accept(true);
+        });
+
+        prevMonthBtn.setOnAction(e -> {
+            calendar.addMonths(-1);
+            onCalendarUpdate.accept(false);
+        });
+
+        nextMonthBtn.setOnAction(e -> {
+            calendar.addMonths(1);
+            onCalendarUpdate.accept(false);
         });
     }
 }

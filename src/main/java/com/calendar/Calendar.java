@@ -72,6 +72,28 @@ public class Calendar implements Comparable<Calendar> {
     }
 
     // METHODS
+    public void addMonths(int months) {
+        int newMonthNum = this.month.getNumOfMonth() + months;
+        int newYear = this.year;
+
+        while (newMonthNum > 12) {
+            newMonthNum -= 12;
+            newYear++;
+        }
+        while (newMonthNum < 1) {
+            newMonthNum += 12;
+            newYear--;
+        }
+
+        this.year = newYear;
+        this.month = MonthsTable.getMonth(newYear, newMonthNum);
+
+        int maxDay = MonthsTable.getDaysInMonth(newYear, newMonthNum);
+        if (this.day > maxDay) {
+            this.day = maxDay;
+        }
+    }
+
     /**
      * Advances the calendar date by one week (7 days).
      * This method correctly handles month and year rollovers.
@@ -269,6 +291,10 @@ public class Calendar implements Comparable<Calendar> {
 
     public String getDateWithMonth() {
         return String.format("%d %s %d", day, month.getNameOfMonth(), year);
+    }
+
+    public String getDateWithMonthName() {
+        return String.format("%d %s", day, MonthsTable.getMonthNameGenitive(month.getNumOfMonth()));
     }
 
     @Override

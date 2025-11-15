@@ -15,6 +15,7 @@ import javafx.scene.text.Text;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class CalendarController implements Initializable {
@@ -23,17 +24,20 @@ public class CalendarController implements Initializable {
     private Calendar calendar;
     private ButtonHandler buttonHandler;
     private EventManager eventManager;
+    private boolean isUpdate;
 
     @FXML
     private AnchorPane root;
     @FXML
     private Label currentDate;
     @FXML
-    private Label dayName;
+    private Label selectedMonthLabel;
 
     // Buttons
     @FXML
     private Button minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn;
+    @FXML
+    private Button prevMonthBtn, nextMonthBtn;
 
     // Event
     @FXML
@@ -49,20 +53,26 @@ public class CalendarController implements Initializable {
     private void init() {
         calendar = new Calendar();
         eventManager = new EventManager(EVENTS_PATH);
-        currentDate.setText(calendar.getDateWithMonth());
-        dayName.setText(calendar.getDayOfWeekByZeller());
+        currentDate.setText(calendar.getDayOfWeekByZeller() + ", " + calendar.getDateWithMonthName());
         buttonHandler = new ButtonHandler(calendar, this::refreshCalendar);
+        isUpdate = true;
 
-        buttonHandler.setupButtons(minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn);
+        buttonHandler.setupButtons(minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn, prevMonthBtn, nextMonthBtn);
 
         setupEventPanel();
         createCalendarCardsGrid();
     }
 
-    private void refreshCalendar() {
-        currentDate.setText(calendar.getDateWithMonth());
-        dayName.setText(calendar.getDayOfWeekByZeller());
-        eventDatePicker.setValue(LocalDate.parse(calendar.toString()));
+    private void refreshCalendar(boolean updateCurrentDate) {
+        if (updateCurrentDate) {
+            currentDate.setText(calendar.getDayOfWeekByZeller() + ", " + calendar.getDateWithMonthName());
+            eventDatePicker.setValue(LocalDate.parse(calendar.toString()));
+            this.isUpdate = true;
+        } else {
+            this.isUpdate = calendar.getMonth().getNumOfMonth() == LocalDate.now().getMonthValue();
+        }
+
+        selectedMonthLabel.setText(calendar.getMonth().getNameOfMonth() + " " + calendar.getYear());
         createCalendarCardsGrid();
     }
 
@@ -139,9 +149,11 @@ public class CalendarController implements Initializable {
             Label dayLabel = new Label(String.valueOf(dayCounter));
             dayLabel.setPrefSize(cellWidth, cellHeight);
             dayLabel.setAlignment(Pos.CENTER);
-            dayLabel.setStyle(dayCounter == calendar.getDay()
+
+            dayLabel.setStyle(dayCounter == calendar.getDay() && isUpdate
                     ? "-fx-background-color: #F0DFAD; -fx-border-color: gray;"
                     : "-fx-border-color: lightgray; -fx-alignment: center;");
+
 
             grid.add(dayLabel, currentCol, currentRow);
 
