@@ -108,6 +108,22 @@ public class EventManager {
     }
 
     /**
+     * Looking for fist similar event from the list
+     *
+     * @param date the date to filter events (must not be null)
+     * @return found event or null is event is not exist
+     * */
+    public Event getEventForDate(LocalDate date) {
+        Event result = null;
+        for (Event event : events) {
+            if (event.getDate().equals(date)) {
+                result = event;
+            }
+        }
+        return result;
+    }
+
+    /**
      * This method gets a copy of all events.
      * <p>
      *     Returns a defencive copy to project in internal list.

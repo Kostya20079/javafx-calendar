@@ -1,22 +1,25 @@
 package com.calendar;
 
+import com.calendar.Event.Event;
 import com.calendar.Event.EventManager;
 import com.calendar.Month.MonthsTable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Text;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CalendarController implements Initializable {
 
@@ -25,6 +28,7 @@ public class CalendarController implements Initializable {
     private ButtonHandler buttonHandler;
     private EventManager eventManager;
     private boolean isUpdate;
+    private Set<LocalDate> eventDates;
 
     @FXML
     private AnchorPane root;
@@ -59,6 +63,7 @@ public class CalendarController implements Initializable {
 
         buttonHandler.setupButtons(minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn, prevMonthBtn, nextMonthBtn);
 
+        loadEventDates();
         setupEventPanel();
         createCalendarCardsGrid();
     }
@@ -77,7 +82,6 @@ public class CalendarController implements Initializable {
     }
 
     private void setupEventPanel() {
-        eventManager.loadEvents();
         eventDatePicker.setValue(LocalDate.parse(calendar.toString()));
         refreshEventList();
 
@@ -100,6 +104,14 @@ public class CalendarController implements Initializable {
         });
 
         eventDatePicker.valueProperty().addListener((obs, oldDate, newDate) -> refreshEventList());
+    }
+
+    private void loadEventDates() {
+        eventManager.loadEvents(); // make sure events are loaded
+        eventDates = eventManager.getAllEvents()
+                .stream()
+                .map(Event::getDate)
+                .collect(Collectors.toSet());
     }
 
     private void refreshEventList() {
@@ -137,7 +149,6 @@ public class CalendarController implements Initializable {
     }
 
     private void createDateCards(GridPane grid, final int days) {
-        // Add day cells
         int dayCounter = 1;
         int currentRow = 1;
         int currentCol = 0;
@@ -150,10 +161,22 @@ public class CalendarController implements Initializable {
             dayLabel.setPrefSize(cellWidth, cellHeight);
             dayLabel.setAlignment(Pos.CENTER);
 
-            dayLabel.setStyle(dayCounter == calendar.getDay() && isUpdate
-                    ? "-fx-background-color: #F0DFAD; -fx-border-color: gray;"
-                    : "-fx-border-color: lightgray; -fx-alignment: center;");
+            LocalDate selectedDate = LocalDate.of(calendar.getYear(), calendar.getMonth().getNumOfMonth(), dayCounter);
 
+            // open modal on click
+            dayLabel.setOnMouseClicked(e -> openAddEventModal(selectedDate));
+
+            // highlight today
+            if (dayCounter == calendar.getDay() && isUpdate) {
+                dayLabel.setStyle("-fx-background-color: #F0DFAD; -fx-border-color: gray;");
+            }
+            // highlight days with events
+            else if (eventDates.contains(selectedDate)) {
+                dayLabel.setStyle("-fx-background-color: #ADE8F4; -fx-border-color: gray; -fx-alignment: center;");
+            }
+            else {
+                dayLabel.setStyle("-fx-border-color: lightgray; -fx-alignment: center;");
+            }
 
             grid.add(dayLabel, currentCol, currentRow);
 
@@ -164,6 +187,49 @@ public class CalendarController implements Initializable {
             }
             dayCounter++;
         }
+    }
+
+    private void openAddEventModal(LocalDate selectedDate) {
+
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Dodaj wydarzenie");
+        dialog.setHeaderText("Dodaj wydarzenie na " + selectedDate);
+
+        ButtonType addButtonType = new ButtonType("Dodaj", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
+
+        TextField titleField = new TextField();
+        titleField.setPromptText("Tytuł wydarzenia");
+
+        DatePicker datePicker = new DatePicker(selectedDate);
+
+        VBox content = new VBox(10, new Label("Tytuł:"), titleField, new Label("Data:"), datePicker);
+        content.setPadding(new Insets(20));
+        dialog.getDialogPane().setContent(content);
+
+        Node addButton = dialog.getDialogPane().lookupButton(addButtonType);
+        addButton.setDisable(true);
+        titleField.textProperty().addListener((obs, oldVal, newVal) -> addButton.setDisable(newVal.trim().isEmpty()));
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == addButtonType) {
+                return titleField.getText();
+            }
+            return null;
+        });
+
+        dialog.showAndWait().ifPresent(title -> {
+            try {
+                eventManager.addEvent(datePicker.getValue(), title);
+
+                loadEventDates();
+                refreshEventList();
+                createCalendarCardsGrid();
+
+            } catch (Exception ex) {
+                System.err.println("Błąd dodawania wydarzenia: " + ex.getMessage());
+            }
+        });
     }
 
     @Override
