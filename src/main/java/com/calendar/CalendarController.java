@@ -28,14 +28,14 @@ public class CalendarController implements Initializable {
     private AnchorPane root;
     @FXML
     private Label currentDate;
+    @FXML
+    private Label dayName;
 
     // Buttons
     @FXML
     private Button minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn;
 
     // Event
-    @FXML
-    private AnchorPane eventPanel;
     @FXML
     private TextField eventTitleField;
     @FXML
@@ -50,6 +50,7 @@ public class CalendarController implements Initializable {
         calendar = new Calendar();
         eventManager = new EventManager(EVENTS_PATH);
         currentDate.setText(calendar.getDateWithMonth());
+        dayName.setText(calendar.getDayOfWeekByZeller());
         buttonHandler = new ButtonHandler(calendar, this::refreshCalendar);
 
         buttonHandler.setupButtons(minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn);
@@ -60,6 +61,7 @@ public class CalendarController implements Initializable {
 
     private void refreshCalendar() {
         currentDate.setText(calendar.getDateWithMonth());
+        dayName.setText(calendar.getDayOfWeekByZeller());
         eventDatePicker.setValue(LocalDate.parse(calendar.toString()));
         createCalendarCardsGrid();
     }
