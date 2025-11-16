@@ -51,8 +51,7 @@ public class CalendarController implements Initializable {
     @FXML
     private Button addEventBtn;
     @FXML
-    private ListView<String> eventListView;
-
+    private ListView<Label> eventListView;
 
     private void init() {
         calendar = new Calendar();
@@ -97,7 +96,7 @@ public class CalendarController implements Initializable {
             try {
                 eventManager.addEvent(date, title);
                 eventTitleField.clear();
-                refreshEventList();
+                reloadEvents();
             } catch (Exception ex) {
                 System.err.println("Błąd dodawania wydarzenia: " + ex.getMessage());
             }
@@ -107,11 +106,17 @@ public class CalendarController implements Initializable {
     }
 
     private void loadEventDates() {
-        eventManager.loadEvents(); // make sure events are loaded
+        eventManager.loadEvents();
         eventDates = eventManager.getAllEvents()
                 .stream()
                 .map(Event::getDate)
                 .collect(Collectors.toSet());
+    }
+
+    private void reloadEvents() {
+        loadEventDates();
+        refreshEventList();
+        createCalendarCardsGrid();
     }
 
     private void refreshEventList() {
@@ -119,10 +124,18 @@ public class CalendarController implements Initializable {
 
         var events = eventManager.getAllEvents();
         if (events.isEmpty()) {
-            eventListView.getItems().add("Brak wydarzeń");
+            Label empty = new Label("Brak wydarzeń");
+            empty.getStyleClass().add("event-empty");
+            empty.setId("event-empty");
+            eventListView.getItems().add(empty);
         } else {
             for (var e : events) {
-                eventListView.getItems().add("• " + e.getDescription());
+                Label eventItem = new Label("• " + e.getDescription());
+                eventItem.getStyleClass().add("event-li");
+
+                eventItem.setId("event-" + e.getDate().toString());
+
+                eventListView.getItems().add(eventItem);
             }
         }
     }
@@ -160,7 +173,7 @@ public class CalendarController implements Initializable {
             Label dayLabel = new Label(String.valueOf(dayCounter));
             dayLabel.setPrefSize(cellWidth, cellHeight);
             dayLabel.setAlignment(Pos.CENTER);
-
+            dayLabel.setId("date-item-" + dayCounter);
             LocalDate selectedDate = LocalDate.of(calendar.getYear(), calendar.getMonth().getNumOfMonth(), dayCounter);
 
             // open modal on click
@@ -168,14 +181,15 @@ public class CalendarController implements Initializable {
 
             // highlight today
             if (dayCounter == calendar.getDay() && isUpdate) {
-                dayLabel.setStyle("-fx-background-color: #F0DFAD; -fx-border-color: gray;");
+                dayLabel.getStyleClass().add("date-item-current");
             }
             // highlight days with events
             else if (eventDates.contains(selectedDate)) {
-                dayLabel.setStyle("-fx-background-color: #ADE8F4; -fx-border-color: gray; -fx-alignment: center;");
+                dayLabel.getStyleClass().add("date-item-event");
             }
+            // basic
             else {
-                dayLabel.setStyle("-fx-border-color: lightgray; -fx-alignment: center;");
+                dayLabel.getStyleClass().add("date-item");
             }
 
             grid.add(dayLabel, currentCol, currentRow);
@@ -221,11 +235,7 @@ public class CalendarController implements Initializable {
         dialog.showAndWait().ifPresent(title -> {
             try {
                 eventManager.addEvent(datePicker.getValue(), title);
-
-                loadEventDates();
-                refreshEventList();
-                createCalendarCardsGrid();
-
+                reloadEvents();
             } catch (Exception ex) {
                 System.err.println("Błąd dodawania wydarzenia: " + ex.getMessage());
             }

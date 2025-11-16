@@ -21,14 +21,13 @@
                    </font>
                </Label>
                <HBox alignment="CENTER" layoutY="15" prefWidth="500" spacing="20" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-                   <Button fx:id="prevMonthBtn" prefWidth="40" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="‹" />
+                   <Button fx:id="prevMonthBtn" prefWidth="40" styleClass="button-main" text="‹" />
                    <Label fx:id="selectedMonthLabel" alignment="CENTER" prefWidth="260" style="-fx-text-fill: #8F5C38;" text="Styczeń 2024">
                        <font>
                            <Font size="25" />
                        </font>
                    </Label>
-                   <Button fx:id="nextMonthBtn" prefWidth="40" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="›" />
-
+                   <Button fx:id="nextMonthBtn" prefWidth="40" styleClass="button-main" text="›" />
                </HBox>
            </children>
        </AnchorPane>
@@ -37,21 +36,21 @@
    <left>
       <AnchorPane prefHeight="862.0" prefWidth="240.0" style="-fx-background-color: #CEDADA;" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="minusDayBtn" layoutX="33.0" layoutY="63.0" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="75.0" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="Zmniejsz" textAlignment="CENTER" textFill="WHITE" />
-            <Button fx:id="plusDayBtn" layoutX="135.0" layoutY="63.0" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="26.0" prefWidth="75.0" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="Dodaj" textAlignment="CENTER" />
+            <Button fx:id="minusDayBtn" layoutX="33.0" layoutY="63.0" maxWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" styleClass="button-main" text="Zmniejsz" textAlignment="CENTER" textFill="WHITE" />
+            <Button fx:id="plusDayBtn" layoutX="135.0" layoutY="63.0" maxWidth="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" styleClass="button-main" text="Dodaj" textAlignment="CENTER" />
             <Text id="text" layoutX="66.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: #8F5C38;" text="Dodaj dzień">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Text>
-            <Button fx:id="minusWeekBtn" layoutX="30.0" layoutY="158.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="75.0" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="Zmniejsz" textAlignment="CENTER" textFill="WHITE" />
-            <Button fx:id="plusWeekBtn" layoutX="132.0" layoutY="158.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="75.0" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="Dodaj" textAlignment="CENTER" />
+            <Button fx:id="minusWeekBtn" layoutX="30.0" layoutY="158.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" styleClass="button-main" text="Zmniejsz" textAlignment="CENTER" textFill="WHITE" />
+            <Button fx:id="plusWeekBtn" layoutX="132.0" layoutY="158.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" styleClass="button-main" text="Dodaj" textAlignment="CENTER" />
             <Text id="text" layoutX="63.0" layoutY="137.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-fill: #8F5C38;" text="Dodaj tydzień">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Text>
-            <Button fx:id="resetBtn" layoutX="83.0" layoutY="807.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="73.0" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="Wyczyść" />
+            <Button fx:id="resetBtn" layoutX="83.0" layoutY="807.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="90.0" styleClass="button-main" text="Wyczyść" />
          </children>
       </AnchorPane>
    </left>
@@ -61,14 +60,14 @@
     <right>
         <AnchorPane fx:id="eventPanel" prefHeight="862.0" prefWidth="298.0" style="-fx-background-color: #CEDADA;" BorderPane.alignment="CENTER">
             <children>
-                <Label layoutX="96.0" layoutY="14.0" text="Wydarzenia">
+                <Label layoutX="96.0" layoutY="14.0" style="-fx-text-fill: #8F5C38;" text="Wydarzenia">
                     <font>
                         <Font name="System Bold" size="18.0" />
                     </font>
                 </Label>
                 <TextField fx:id="eventTitleField" layoutX="24.0" layoutY="59.0" prefHeight="26.0" prefWidth="250.0" promptText="Tytuł wydarzenia" />
                 <DatePicker fx:id="eventDatePicker" layoutX="24.0" layoutY="102.0" prefHeight="26.0" prefWidth="250.0" />
-                <Button fx:id="addEventBtn" layoutX="24.0" layoutY="138.0" prefHeight="26.0" prefWidth="250.0" style="-fx-background-color: #F0DFAD; -fx-text-fill: #8F5C38;" text="Dodaj wydarzenie" />
+                <Button fx:id="addEventBtn" layoutX="24.0" layoutY="138.0" prefHeight="26.0" prefWidth="250.0" styleClass="button-main" text="Dodaj wydarzenie" />
                 <Label layoutX="24.0" layoutY="193.0" style="-fx-text-fill: #8F5C38;" text="Lista wydarzeń:" />
                 <ListView fx:id="eventListView" layoutX="20.0" layoutY="220.0" prefHeight="600.0" prefWidth="260.0" />
             </children>

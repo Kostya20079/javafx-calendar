@@ -1,0 +1,41 @@
+.date-item {
+    -fx-border-color: lightgray;
+    -fx-alignment: center;
+}
+
+.date-item:hover {
+    -fx-background-color: #bdbcbc;
+}
+
+.date-item-current {
+    -fx-background-color: #F0DFAD;
+    -fx-border-color: gray;
+}
+
+.date-item-current:hover {
+    -fx-background-color: #F7E6A6;
+}
+
+.date-item-event {
+    -fx-background-color: #ADE8F4;
+}
+
+.date-item-event:hover {
+    -fx-background-color: #7FD3F0;
+}
+
+.button-main {
+    -fx-background-color: #F0DFAD;
+    -fx-text-fill: #8F5C38;
+    -fx-font-weight: bold;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.button-main:hover {
+    -fx-background-color: #f5e7c4;
+}
+
+.button-main:pressed {
+    -fx-background-color: #e6d7ac;
+}
