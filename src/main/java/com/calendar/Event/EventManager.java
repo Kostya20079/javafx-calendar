@@ -53,8 +53,6 @@ public class EventManager {
      *      If the file doesn't exist, it will be created and an empty list will be loaded.
      *      On any error, an empty list will be initialized and an error message printed.
      * </p>
-     *
-     * @throws IOException if there are problems creating the file
      */
     public void loadEvents() {
         try {
@@ -81,8 +79,6 @@ public class EventManager {
      *
      * @param date the date of the event (must not be null)
      * @param description the event description (must not be null or empty)
-     * @throws IllegalArgumentException if date or description are invalid
-     * @throws IOException if there are problems writing to the file
      */
     public void addEvent(LocalDate date, String description) {
         Event event = new Event(date, description);
@@ -133,5 +129,17 @@ public class EventManager {
      * */
     public List<Event> getAllEvents() {
         return new ArrayList<>(events); // copy of original events array
+    }
+
+    /**
+     * This method removes event in provided date
+     * @param date to remove event
+     * */
+    public void removeEvent(LocalDate date) {
+        // remove from memory
+        events.removeIf(event -> event.getDate().equals(date));
+
+        // write to csv
+        writer.writeAllEvents(events);
     }
 }

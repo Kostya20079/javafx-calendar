@@ -2,7 +2,11 @@ package com.calendar.Event;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of {@link EventWriter} for writing events to CSV file.
@@ -36,15 +40,33 @@ public class EventCSVWriter implements EventWriter {
      * </p>
      *
      * @param event the event to write (must not be null)
-     * @throws IOException if an I/O error occurs while writing to the file
-     * @throws IllegalArgumentException if the event is null
      */
     @Override
     public void writeEvent(Event event) {
         try (FileWriter writer = new FileWriter(filePath, true)) {
             writer.write(event.getDate().format(DATE_PATTERN) + "," + event.getDescription() + "\n");
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             System.err.println("Nie udało się zapisać wydarzenia: " + e.getMessage());
+        }
+    }
+
+    /**
+     *  This method writes all events located in memory to csv file
+     *  <p>
+     *      This method rewrites all file with data inside
+     *  </p>
+     * */
+    @Override
+    public void writeAllEvents(List<Event> events) {
+        List<String> lines = new ArrayList<>();
+        for (Event e : events) {
+            lines.add(e.getDate().format(DATE_PATTERN) + "," + e.getDescription());
+        }
+
+        try {
+            Files.write(Path.of(filePath), lines);
+        } catch (IOException e) {
+            System.err.println("Nie udało się zapisać wydarzeń: " + e.getMessage());
         }
     }
 }

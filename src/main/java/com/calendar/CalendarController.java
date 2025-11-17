@@ -23,9 +23,8 @@ import java.util.stream.Collectors;
 
 public class CalendarController implements Initializable {
 
-    private final String EVENTS_PATH = Paths.get(System.getProperty("user.dir")).toAbsolutePath().toString() + "/src/main/java/com/calendar/Event/events.csv";
+    private final String EVENTS_PATH = Paths.get(System.getProperty("user.dir")).toAbsolutePath() + "/src/main/java/com/calendar/Event/events.csv";
     private Calendar calendar;
-    private ButtonHandler buttonHandler;
     private EventManager eventManager;
     private boolean isUpdate;
     private Set<LocalDate> eventDates;
@@ -57,7 +56,7 @@ public class CalendarController implements Initializable {
         calendar = new Calendar();
         eventManager = new EventManager(EVENTS_PATH);
         currentDate.setText(calendar.getDayOfWeekByZeller() + ", " + calendar.getDateWithMonthName());
-        buttonHandler = new ButtonHandler(calendar, this::refreshCalendar);
+        ButtonHandler buttonHandler = new ButtonHandler(calendar, this::refreshCalendar);
         isUpdate = true;
 
         buttonHandler.setupButtons(minusDayBtn, plusDayBtn, minusWeekBtn, plusWeekBtn, resetBtn, prevMonthBtn, nextMonthBtn);
@@ -174,10 +173,12 @@ public class CalendarController implements Initializable {
             dayLabel.setPrefSize(cellWidth, cellHeight);
             dayLabel.setAlignment(Pos.CENTER);
             dayLabel.setId("date-item-" + dayCounter);
+
+            // creating date
             LocalDate selectedDate = LocalDate.of(calendar.getYear(), calendar.getMonth().getNumOfMonth(), dayCounter);
 
             // open modal on click
-            dayLabel.setOnMouseClicked(e -> openAddEventModal(selectedDate));
+            dayLabel.setOnMouseClicked(e -> openEventModal(selectedDate));
 
             // highlight today
             if (dayCounter == calendar.getDay() && isUpdate) {
@@ -203,43 +204,81 @@ public class CalendarController implements Initializable {
         }
     }
 
-    private void openAddEventModal(LocalDate selectedDate) {
+    private void openEventModal(LocalDate selectedDate) {
+        Event existingEvent = eventManager.getEventForDate(selectedDate);
 
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Dodaj wydarzenie");
-        dialog.setHeaderText("Dodaj wydarzenie na " + selectedDate);
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("Wydarzenie");
 
-        ButtonType addButtonType = new ButtonType("Dodaj", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(addButtonType, ButtonType.CANCEL);
-
+        // UI elements reused for both modes
         TextField titleField = new TextField();
-        titleField.setPromptText("Tytuł wydarzenia");
-
         DatePicker datePicker = new DatePicker(selectedDate);
 
-        VBox content = new VBox(10, new Label("Tytuł:"), titleField, new Label("Data:"), datePicker);
+        VBox content = new VBox(10);
         content.setPadding(new Insets(20));
         dialog.getDialogPane().setContent(content);
 
-        Node addButton = dialog.getDialogPane().lookupButton(addButtonType);
-        addButton.setDisable(true);
-        titleField.textProperty().addListener((obs, oldVal, newVal) -> addButton.setDisable(newVal.trim().isEmpty()));
+        ButtonType addButton = new ButtonType("Dodaj", ButtonBar.ButtonData.OK_DONE);
+        ButtonType saveButton = new ButtonType("Zapisz", ButtonBar.ButtonData.OK_DONE);
+        ButtonType deleteButton = new ButtonType("Usuń", ButtonBar.ButtonData.LEFT);
+        ButtonType closeButton = new ButtonType("Zamknij", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == addButtonType) {
-                return titleField.getText();
-            }
-            return null;
-        });
+        if (existingEvent == null) {
+            // MODE: ADD EVENT
+            dialog.setHeaderText("Dodaj wydarzenie na " + selectedDate);
 
-        dialog.showAndWait().ifPresent(title -> {
-            try {
-                eventManager.addEvent(datePicker.getValue(), title);
-                reloadEvents();
-            } catch (Exception ex) {
-                System.err.println("Błąd dodawania wydarzenia: " + ex.getMessage());
-            }
-        });
+            titleField.setPromptText("Tytuł wydarzenia");
+
+            content.getChildren().addAll(
+                    new Label("Tytuł:"), titleField,
+                    new Label("Data:"), datePicker
+            );
+
+            dialog.getDialogPane().getButtonTypes().addAll(addButton, closeButton);
+
+            // disable "Dodaj" until title is typed
+            Node addNode = dialog.getDialogPane().lookupButton(addButton);
+            addNode.setDisable(true);
+            titleField.textProperty().addListener((o, oldVal, newVal) ->
+                    addNode.setDisable(newVal.trim().isEmpty())
+            );
+
+            dialog.setResultConverter(button -> {
+                if (button == addButton) {
+                    eventManager.addEvent(datePicker.getValue(), titleField.getText());
+                    reloadEvents();
+                }
+                return null;
+            });
+
+        } else {
+            // MODE: SHOW / EDIT EVENT
+            dialog.setHeaderText("Informacje o wydarzeniu: " + selectedDate);
+
+            titleField.setText(existingEvent.getDescription());
+
+            content.getChildren().addAll(
+                    new Label("Tytuł:"), titleField,
+                    new Label("Data:"), datePicker
+            );
+
+            dialog.getDialogPane().getButtonTypes().addAll(saveButton, deleteButton, closeButton);
+
+            dialog.setResultConverter(button -> {
+                if (button == deleteButton) {
+                    eventManager.removeEvent(selectedDate);
+                    reloadEvents();
+                } else if (button == saveButton) {
+                    // remove old and add edited one
+                    eventManager.removeEvent(selectedDate);
+                    eventManager.addEvent(datePicker.getValue(), titleField.getText());
+                    reloadEvents();
+                }
+                return null;
+            });
+        }
+
+        dialog.showAndWait();
     }
 
     @Override
