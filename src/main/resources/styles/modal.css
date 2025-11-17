@@ -1,0 +1,74 @@
+/* ===== Dialog Container ===== */
+.custom-dialog {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 12px;
+    -fx-padding: 0;
+}
+
+/* ===== Dialog Header ===== */
+.dialog-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #8F5C38;
+    -fx-padding: 0 0 10 0;
+}
+
+/* ===== Dialog Content ===== */
+.dialog-content {
+    -fx-background-color: #fafafa;
+    -fx-background-radius: 12px;
+    -fx-spacing: 10px;
+    -fx-padding: 20;
+}
+
+/* ===== Input Fields ===== */
+.input-field {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+    -fx-border-color: #d7d7d7;
+    -fx-padding: 6;
+}
+
+.input-field:focused {
+    -fx-border-color: #F0DFAD;
+    -fx-background-color: #ffffff;
+}
+
+/* ===== Date Picker ===== */
+.date-picker {
+    -fx-background-radius: 6;
+    -fx-border-radius: 6;
+}
+
+/* ===== Buttons ===== */
+.dialog-pane .button {
+    -fx-font-size: 14px;
+    -fx-padding: 6 14;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.dialog-pane .button {
+    -fx-background-color: #F0DFAD;
+    -fx-text-fill: #8F5C38;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .button:hover {
+    -fx-background-color: #f5e7c4;
+}
+
+.dialog-pane .button:pressed {
+    -fx-background-color: #e6d7ac;
+}
+
+/* Delete button (custom style) */
+.dialog-pane .button-left {
+    -fx-background-color: #ff6b6b;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.dialog-pane .button-left:hover {
+    -fx-background-color: #ff4c4c;
+}

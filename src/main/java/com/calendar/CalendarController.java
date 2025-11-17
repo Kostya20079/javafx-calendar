@@ -209,74 +209,78 @@ public class CalendarController implements Initializable {
 
         Dialog<Void> dialog = new Dialog<>();
         dialog.setTitle("Wydarzenie");
+        dialog.getDialogPane().getStylesheets().add(
+                getClass().getResource("/styles/modal.css").toExternalForm()
+        );
+        dialog.getDialogPane().getStyleClass().add("custom-dialog");
 
-        // UI elements reused for both modes
+        // HEADER
+        Label headerLabel = new Label(
+                (existingEvent == null)
+                        ? "Dodaj wydarzenie"
+                        : "Informacje o wydarzeniu"
+        );
+        headerLabel.getStyleClass().add("dialog-header");
+
+        // INPUT FIELDS
         TextField titleField = new TextField();
-        DatePicker datePicker = new DatePicker(selectedDate);
+        titleField.getStyleClass().add("input-field");
 
-        VBox content = new VBox(10);
+        DatePicker datePicker = new DatePicker(selectedDate);
+        datePicker.getStyleClass().add("date-picker");
+
+        if (existingEvent != null) {
+            titleField.setText(existingEvent.getDescription());
+        } else {
+            titleField.setPromptText("Tytuł wydarzenia");
+        }
+
+        VBox content = new VBox(12,
+                headerLabel,
+                new Label("Tytuł:"), titleField,
+                new Label("Data:"), datePicker
+        );
         content.setPadding(new Insets(20));
+        content.getStyleClass().add("dialog-content");
+
         dialog.getDialogPane().setContent(content);
 
-        ButtonType addButton = new ButtonType("Dodaj", ButtonBar.ButtonData.OK_DONE);
-        ButtonType saveButton = new ButtonType("Zapisz", ButtonBar.ButtonData.OK_DONE);
-        ButtonType deleteButton = new ButtonType("Usuń", ButtonBar.ButtonData.LEFT);
-        ButtonType closeButton = new ButtonType("Zamknij", ButtonBar.ButtonData.CANCEL_CLOSE);
+        // BUTTONS
+        ButtonType addBtn = new ButtonType("Dodaj", ButtonBar.ButtonData.OK_DONE);
+        ButtonType saveBtn = new ButtonType("Zapisz", ButtonBar.ButtonData.OK_DONE);
+        ButtonType deleteBtn = new ButtonType("Usuń", ButtonBar.ButtonData.LEFT);
+        ButtonType closeBtn = new ButtonType("Zamknij", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         if (existingEvent == null) {
-            // MODE: ADD EVENT
-            dialog.setHeaderText("Dodaj wydarzenie na " + selectedDate);
-
-            titleField.setPromptText("Tytuł wydarzenia");
-
-            content.getChildren().addAll(
-                    new Label("Tytuł:"), titleField,
-                    new Label("Data:"), datePicker
-            );
-
-            dialog.getDialogPane().getButtonTypes().addAll(addButton, closeButton);
-
-            // disable "Dodaj" until title is typed
-            Node addNode = dialog.getDialogPane().lookupButton(addButton);
-            addNode.setDisable(true);
-            titleField.textProperty().addListener((o, oldVal, newVal) ->
-                    addNode.setDisable(newVal.trim().isEmpty())
-            );
-
-            dialog.setResultConverter(button -> {
-                if (button == addButton) {
-                    eventManager.addEvent(datePicker.getValue(), titleField.getText());
-                    reloadEvents();
-                }
-                return null;
-            });
-
+            dialog.getDialogPane().getButtonTypes().addAll(addBtn, closeBtn);
         } else {
-            // MODE: SHOW / EDIT EVENT
-            dialog.setHeaderText("Informacje o wydarzeniu: " + selectedDate);
-
-            titleField.setText(existingEvent.getDescription());
-
-            content.getChildren().addAll(
-                    new Label("Tytuł:"), titleField,
-                    new Label("Data:"), datePicker
-            );
-
-            dialog.getDialogPane().getButtonTypes().addAll(saveButton, deleteButton, closeButton);
-
-            dialog.setResultConverter(button -> {
-                if (button == deleteButton) {
-                    eventManager.removeEvent(selectedDate);
-                    reloadEvents();
-                } else if (button == saveButton) {
-                    // remove old and add edited one
-                    eventManager.removeEvent(selectedDate);
-                    eventManager.addEvent(datePicker.getValue(), titleField.getText());
-                    reloadEvents();
-                }
-                return null;
-            });
+            dialog.getDialogPane().getButtonTypes().addAll(saveBtn, deleteBtn, closeBtn);
         }
+
+        // Disable "Dodaj" if title empty
+        if (existingEvent == null) {
+            Node addButton = dialog.getDialogPane().lookupButton(addBtn);
+            addButton.setDisable(true);
+
+            titleField.textProperty().addListener((obs, oldVal, newVal) ->
+                    addButton.setDisable(newVal.trim().isEmpty())
+            );
+        }
+
+        dialog.setResultConverter(button -> {
+            if (button == deleteBtn) {
+                eventManager.removeEvent(selectedDate);
+                reloadEvents();
+            } else if (button == saveBtn) {
+                eventManager.removeEvent(selectedDate);
+                eventManager.addEvent(datePicker.getValue(), titleField.getText());
+                reloadEvents();
+            } else if (button == addBtn) {
+                eventManager.addEvent(datePicker.getValue(), titleField.getText());
+                reloadEvents();
+            }
+            return null;
+        });
 
         dialog.showAndWait();
     }
